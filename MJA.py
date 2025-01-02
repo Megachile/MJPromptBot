@@ -85,7 +85,7 @@ async def send_prompt_with_profile(message, base_prompt, profile_id):
         time.sleep(1)
         
         # Construct full prompt with profile
-        full_prompt = f"{base_prompt} --profile {profile_id}"
+        full_prompt = f"{base_prompt} --c 15 --profile {profile_id}"
         
         message_box.send_keys("/imagine")
         time.sleep(1)
