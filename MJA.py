@@ -61,7 +61,6 @@ intents.dm_messages     = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 # === SELENIUM DRIVER ===
-driver = None
 queue  = asyncio.Queue()
 
 def setup_selenium():
