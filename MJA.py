@@ -96,9 +96,24 @@ def setup_selenium():
     driver.find_element(By.NAME, "password").send_keys(DISCORD_PASSWORD, Keys.RETURN)
 
     print("💬 Waiting for DM panel…")
-    print("🔍 Dumping current page HTML…")
-    print(driver.page_source)
-    driver.save_screenshot("post_login.png")
+    time.sleep(5)  # allow time for redirect
+
+    try:
+        WebDriverWait(driver, 40).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "main[role='main']"))
+        )
+        print("✅ Main panel located.")
+    except TimeoutException:
+        print("⚠️ Timeout waiting for main panel. Dumping summary:")
+        elements = driver.find_elements(By.CSS_SELECTOR, "div[class]")
+        print(f"🧱 Found {len(elements)} divs with classes.")
+        for el in elements[:10]:  # only log the first 10
+            try:
+                print(f"• {el.get_attribute('class')}")
+            except:
+                continue
+        driver.save_screenshot("post_login.png")
+        raise  # re-raise to keep current behavior
 
     WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, "main[role='main']"))
