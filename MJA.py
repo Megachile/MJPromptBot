@@ -96,8 +96,12 @@ def setup_selenium():
     driver.find_element(By.NAME, "password").send_keys(DISCORD_PASSWORD, Keys.RETURN)
 
     print("💬 Waiting for DM panel…")
+    print("🔍 Dumping current page HTML…")
+    print(driver.page_source)
+    driver.save_screenshot("post_login.png")
+
     WebDriverWait(driver, 30).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "nav[aria-label='Servers']"))
+        EC.presence_of_element_located((By.CSS_SELECTOR, "main[role='main']"))
     )
 
     print("📥 Navigating to DM chat…")
