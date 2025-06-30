@@ -69,7 +69,7 @@ def setup_selenium():
     print("🛠 Setting up Selenium…")
 
     chrome_opts = Options()
-    chrome_opts.add_argument("--headless=new")
+    # chrome_opts.add_argument("--headless=new")
     chrome_opts.add_argument("--no-sandbox")
     chrome_opts.add_argument("--disable-dev-shm-usage")
     chrome_opts.add_argument("--disable-gpu")
