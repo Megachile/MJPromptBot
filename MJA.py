@@ -17,21 +17,6 @@ from selenium.common.exceptions import (
     ElementClickInterceptedException,
     TimeoutException,
 )
-from webdriver_manager.chrome import ChromeDriverManager
-
-chrome_opts = Options()
-chrome_opts.add_argument("--disable-logging")
-chrome_opts.add_argument("--no-sandbox")
-chrome_opts.add_argument("--disable-dev-shm-usage")
-chrome_opts.add_argument("--disable-gpu")
-chrome_opts.add_argument("--headless")  # Only use this if you're not using Xvfb
-chrome_opts.binary_location = "/usr/bin/chromium-browser"  # Confirm this path matches
-
-driver = webdriver.Chrome(
-    service=Service("/usr/bin/chromedriver"),  # Or /usr/lib/chromium-browser/chromedriver
-    options=chrome_opts
-)
-
 
 # === CONFIG ===
 DEFAULT_PROFILE_ID = "m7273221328335798284"
@@ -87,8 +72,10 @@ def setup_selenium():
     chrome_opts.add_argument("--disable-infobars")
     chrome_opts.add_argument("--start-maximized")
 
-    service = Service(ChromeDriverManager().install())
-    driver  = webdriver.Chrome(service=service, options=chrome_opts)
+    driver = webdriver.Chrome(
+    service=Service("/usr/bin/chromedriver"),
+    options=chrome_opts
+)
 
     driver.get("https://discord.com/login")
 
