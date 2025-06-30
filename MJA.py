@@ -66,36 +66,50 @@ queue  = asyncio.Queue()
 
 def setup_selenium():
     global driver
+    print("🛠 Setting up Selenium…")
+
     chrome_opts = Options()
-    chrome_opts.add_argument("--disable-logging")
+    chrome_opts.add_argument("--headless=new")
     chrome_opts.add_argument("--no-sandbox")
     chrome_opts.add_argument("--disable-dev-shm-usage")
     chrome_opts.add_argument("--disable-gpu")
+    chrome_opts.add_argument("--disable-extensions")
+    chrome_opts.add_argument("--remote-debugging-port=9222")
     chrome_opts.binary_location = "/usr/bin/chromium-browser"
 
-    # Define service with correct chromedriver path
-    service = Service("/usr/lib/chromium-browser/chromedriver")
-    driver = webdriver.Chrome(service=service, options=chrome_opts)
+    print("🚀 Launching browser…")
+    driver = webdriver.Chrome(
+        service=Service("/usr/lib/chromium-browser/chromedriver"),
+        options=chrome_opts
+    )
 
-    # Open Discord login page and wait a bit for slow cloud load
+    print("🌐 Navigating to login page…")
     driver.get("https://discord.com/login")
-    time.sleep(5)  # Give the page time to load
 
-    # Now proceed with the normal login steps
-    WebDriverWait(driver, 20).until(
+    print("⌛ Waiting for email field…")
+    print("🔍 Page content:\n", driver.page_source[:1000])  # only first 1000 chars
+    WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.NAME, "email"))
     ).send_keys(DISCORD_EMAIL)
+
+    print("🔐 Sending password…")
     driver.find_element(By.NAME, "password").send_keys(DISCORD_PASSWORD, Keys.RETURN)
 
+    print("💬 Waiting for DM panel…")
     WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='Direct Messages']"))
     )
 
+    print("📥 Navigating to DM chat…")
     dm_url = "https://discord.com/channels/@me/1122240897984245850"
     driver.get(dm_url)
+
+    print("📝 Waiting for message box…")
     WebDriverWait(driver, 20).until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, "div[role='textbox']"))
     )
+
+    print("✅ Selenium setup complete.")
 
 def wait_for_overlay(timeout=15):
     try:
