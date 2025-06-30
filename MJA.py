@@ -67,18 +67,20 @@ def setup_selenium():
     global driver
     chrome_opts = Options()
     chrome_opts.add_argument("--disable-logging")
-    chrome_opts.add_argument("--log-level=3")
-    chrome_opts.add_experimental_option("excludeSwitches", ["enable-logging"])
-    chrome_opts.add_argument("--disable-infobars")
-    chrome_opts.add_argument("--start-maximized")
+    chrome_opts.add_argument("--no-sandbox")
+    chrome_opts.add_argument("--disable-dev-shm-usage")
+    chrome_opts.add_argument("--disable-gpu")
+    chrome_opts.binary_location = "/usr/bin/chromium-browser"
 
-    driver = webdriver.Chrome(
-    service=Service("/usr/bin/chromedriver"),
-    options=chrome_opts
-)
+    # Define service with correct chromedriver path
+    service = Service("/usr/lib/chromium-browser/chromedriver")
+    driver = webdriver.Chrome(service=service, options=chrome_opts)
 
+    # Open Discord login page and wait a bit for slow cloud load
     driver.get("https://discord.com/login")
+    time.sleep(5)  # Give the page time to load
 
+    # Now proceed with the normal login steps
     WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.NAME, "email"))
     ).send_keys(DISCORD_EMAIL)
