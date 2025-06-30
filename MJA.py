@@ -77,6 +77,70 @@ def setup_selenium():
     chrome_opts.add_argument("--remote-debugging-port=9222")
     chrome_opts.binary_location = "/usr/bin/chromium-browser"
 
+    print("🚀 Launching Chromium browser…")
+    driver = webdriver.Chrome(
+        service=Service("/usr/lib/chromium-browser/chromedriver"),
+        options=chrome_opts
+    )
+
+    print("🌐 Opening Discord login page…")
+    driver.get("https://discord.com/login")
+
+    try:
+        print("⌛ Waiting for login form…")
+        email_box = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.NAME, "email"))
+        )
+        pw_box = driver.find_element(By.NAME, "password")
+        print("🔐 Typing credentials…")
+        email_box.send_keys(DISCORD_EMAIL)
+        pw_box.send_keys(DISCORD_PASSWORD, Keys.RETURN)
+    except TimeoutException:
+        print("❌ Could not find login fields. Page title:", driver.title)
+        driver.save_screenshot("login_fail.png")
+        return
+
+    print("⏳ Waiting for post-login redirect…")
+    try:
+        WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "main[role='main']"))
+        )
+        print("✅ Login succeeded. Main interface loaded.")
+    except TimeoutException:
+        print("⚠️ Login may have failed. Still stuck on login page?")
+        print("URL:", driver.current_url)
+        visible_text = driver.find_element(By.TAG_NAME, "body").text
+        print("📝 Visible text (short):", visible_text[:300].replace("\n", " "))
+        driver.save_screenshot("post_login.png")
+        return
+
+    print("📥 Navigating to DM chat with bot…")
+    dm_url = "https://discord.com/channels/@me/1122240897984245850"
+    driver.get(dm_url)
+
+    try:
+        print("💬 Waiting for message input box…")
+        WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "div[role='textbox']"))
+        )
+        print("✅ Ready to send messages.")
+    except TimeoutException:
+        print("❌ Failed to load DM interface.")
+        driver.save_screenshot("dm_fail.png")
+        return
+
+    global driver
+    print("🛠 Setting up Selenium…")
+
+    chrome_opts = Options()
+    # chrome_opts.add_argument("--headless=new")
+    chrome_opts.add_argument("--no-sandbox")
+    chrome_opts.add_argument("--disable-dev-shm-usage")
+    chrome_opts.add_argument("--disable-gpu")
+    chrome_opts.add_argument("--disable-extensions")
+    chrome_opts.add_argument("--remote-debugging-port=9222")
+    chrome_opts.binary_location = "/usr/bin/chromium-browser"
+
     print("🚀 Launching browser…")
     driver = webdriver.Chrome(
         service=Service("/usr/lib/chromium-browser/chromedriver"),
@@ -87,7 +151,7 @@ def setup_selenium():
     driver.get("https://discord.com/login")
 
     print("⌛ Waiting for email field…")
-    print("🔍 Page content:\n", driver.page_source[:1000])  # only first 1000 chars
+    print("🔍 Page content:\n", driver.page_source[:100])  # only first 100 chars
     WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.NAME, "email"))
     ).send_keys(DISCORD_EMAIL)
