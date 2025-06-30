@@ -17,6 +17,7 @@ from selenium.common.exceptions import (
     ElementClickInterceptedException,
     TimeoutException,
 )
+print("✅ MJPromptBot script version 2025-06-30 loaded.")
 
 # === CONFIG ===
 DEFAULT_PROFILE_ID = "m7273221328335798284"
