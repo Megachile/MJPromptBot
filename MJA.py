@@ -29,6 +29,12 @@ DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 DISCORD_EMAIL     = os.getenv("DISCORD_EMAIL")
 DISCORD_PASSWORD  = os.getenv("DISCORD_PASSWORD")
 
+print("🔑 Loaded ENV vars:")
+print("DISCORD_BOT_TOKEN:", DISCORD_BOT_TOKEN[:10] + "..." if DISCORD_BOT_TOKEN else "❌ NOT SET")
+print("DISCORD_EMAIL:", DISCORD_EMAIL or "❌ NOT SET")
+print("DISCORD_PASSWORD:", "✅ SET" if DISCORD_PASSWORD else "❌ NOT SET")
+
+
 # === LOAD PROFILES ===
 def load_profiles():
     try:
